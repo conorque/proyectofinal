@@ -5,6 +5,7 @@ services:
       - '4000:4000'
     depends_on:
       - users_service
+      - tasks_service
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
