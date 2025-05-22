@@ -1,0 +1,61 @@
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - '4000:4000'
+    depends_on:
+      - users_service
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - micro-network
+
+  users_service:
+    build: ./users_service
+    ports:
+      - '3004:3004'
+    environment:
+      - DB_URI=mongodb://mongo:27017/userDB
+    depends_on:
+      - mongo
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - micro-network
+
+  tasks_service:
+    build: ./tasks_service
+    ports:
+      - '3002:3002'
+    environment:
+      - DB_URI=mongodb://mongo:27017/tasksDB
+    depends_on:
+      - mongo
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - micro-network
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - '27018:27017'
+    environment:
+      - TZ=America/Guayaquil
+    volumes:
+      - mongo-data:/data/db
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - micro-network
+
+networks:
+  micro-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
